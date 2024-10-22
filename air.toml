@@ -1,0 +1,9 @@
+root = "." # 專案的根目錄
+tmp_dir = "tmp" # Air 用來存放臨時文件的目錄
+
+[build] # 編譯配置
+  bin = "main" # 編譯後生成的二進制文件名稱
+  cmd = "go build -o {{.Output}} {{.Input}}" # 編譯專案時執行的命令
+  exclude = ["tmp/*", "client/*"]  # 指定要排除監控變更的目錄
+  include = ["**/*.go"] # 指定要監控的文件模式
+  ignore = ["tmp/*"] # 指定編譯時要忽略的文件或目錄
