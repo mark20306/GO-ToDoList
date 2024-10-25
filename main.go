@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,7 +16,7 @@ import (
 )
 
 type Todo struct {
-	ID primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"` //json:"_id"：這是將 Golang 結構中的 ID 字段轉換為 JSON 時，指定字段名稱為_id，與 MongoDB 的 _id 字段相對應。bson:"_id"：這是將結構體與 MongoDB 的 BSON 文件對應時的標註。MongoDB 中每個文件都有一個特殊的 _id 字段，這裡我們告訴 MongoDB 這個結構中的 ID 字段應該映射到 _id。
+	ID primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"` //json:"_id"：這是將 Golang 結構中的 ID 字段轉換為 JSON 時，指定字段名稱為_id，與 MongoDB 的 _id 字段相對應。bson:"_id"：這是將結構體與 MongoDB 的 BSON 文件對應時的標註。MongoDB 中每個文件都有一個特殊的 _id 字段，這裡我們告訴 MongoDB 這個結構中的 ID 字段應該映射到 _id。
 	/*
 	primitive.ObjectID 是 MongoDB 中的 _id 字段的類型，用來唯一標識文檔。
 	json:"_id,omitempty"：指示在將結構體序列化為 JSON 時，ID 字段應映射到 _id，並且如果值是空值，則不會包含這個字段。
@@ -59,6 +60,11 @@ func main() {
 	collection = client.Database("golang_db").Collection("todos") // 從 MongoDB 中選擇 "golang_db" 資料庫並指向 "todos" 集合
 
 	app := fiber.New() // 創建一個新的 Fiber Web 應用實例
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:5173",
+		AllowHeaders: "Origin,Content-Type,Accept",
+	}))
 
 	app.Get("/api/todos", getTodos)
 	app.Post("/api/todos", createTodos)
